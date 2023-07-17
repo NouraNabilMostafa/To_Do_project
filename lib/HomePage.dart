@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled1/models/to_do.dart';
 import 'package:untitled1/services/todo_service.dart';
+import 'package:untitled1/views/toDos/to_dos_cubit.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -37,7 +39,47 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true ,
 
       ),
-      body: isLoading
+      body:
+      BlocProvider(
+        create: (context) => ToDosCubit(),
+        child:BlocConsumer<ToDosCubit,ToDosState>
+          (builder: (context,state){
+            if (state is ToDosLoading){
+              return  const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if(state is ToDosSuccess){
+              return ListView.builder(
+                  itemCount: context.watch<ToDosCubit>().titles.length,
+                  itemBuilder: (BuildContext context, int index){
+                return ListTile(
+                  leading: Text(context.watch<ToDosCubit>().titles[index].id.toString()?? "--"),
+                  title: Text(context.watch<ToDosCubit>().titles[index].title ??"--"),
+                  trailing: Text("completed: "+context.watch<ToDosCubit>().titles[index].completed.toString() ),
+                );
+
+              },
+            );
+        } else{
+              return const Center(
+                child: Text("error in the screen"),
+              );
+            }
+    },
+            listener: (context,state){
+               if (state is ToDosError){
+                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                   content: Text("we have error"),
+                 ));
+               }
+            },
+        ),
+      )
+      );
+  }
+}
+
+/*isLoading
           ? Center(
              child: CircularProgressIndicator(),
       )
@@ -51,9 +93,4 @@ class _HomePageState extends State<HomePage> {
 
         },
 
-      ),
-    );
-
-  }
-}
-
+      ),*/

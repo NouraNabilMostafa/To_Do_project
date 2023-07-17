@@ -27,24 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-      ? Center(
-      child: CircularProgressIndicator(),
-    )
-      : ListView.builder(
-        itemCount: titles.length,
-        itemBuilder: (BuildContext context, int index){
-          return ListTile(
-            leading: Text(titles[index].id.toString()?? "--"),
-              title: Text(titles[index].title ??"--"),
-              trailing: Text("completed: "+titles[index].completed.toString() ),);
-
-        },
-
-      );
-    
-
-    Scaffold(
+    return Scaffold(
       appBar: AppBar(title: Text("Home page",style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 30
@@ -52,6 +35,21 @@ class _HomePageState extends State<HomePage> {
       )
         ,backgroundColor: Colors.lightBlueAccent,
         centerTitle: true ,
+
+      ),
+      body: isLoading
+          ? Center(
+             child: CircularProgressIndicator(),
+      )
+          : ListView.builder(
+        itemCount: titles.length,
+        itemBuilder: (BuildContext context, int index){
+          return ListTile(
+            leading: Text(titles[index].id.toString()?? "--"),
+            title: Text(titles[index].title ??"--"),
+            trailing: Text("completed: "+titles[index].completed.toString() ),);
+
+        },
 
       ),
     );

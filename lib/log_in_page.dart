@@ -4,6 +4,9 @@ import 'package:untitled1/HomePage.dart';
 import 'package:untitled1/home_page.dart';
 import 'package:untitled1/widgets/button.dart';
 import 'utitlies.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 
 
@@ -19,6 +22,8 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
     final TextEditingController emailcontroller =TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+
 
     return Scaffold(
       appBar: AppBar(title: Text("Log In page",style: TextStyle(
@@ -60,6 +65,8 @@ class _LoginState extends State<Login> {
                   },),),
               InkWell(
                 onTap: (){if(_formKey.currentState!.validate()){
+                  signinUsingFirebase(emailcontroller.text, passwordController.text);
+
                   saveEmail(emailcontroller.text);
                   Navigator.push(context,
                     MaterialPageRoute(builder: (context)=> HomaPage
@@ -79,5 +86,12 @@ class _LoginState extends State<Login> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("email", email);
 
+  }
+  signinUsingFirebase(String email, String password) async {
+    UserCredential userCredential =
+    await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+    final user = userCredential.user;
+    print(user?.uid);
+    saveEmail(user!.email!);
   }
 }

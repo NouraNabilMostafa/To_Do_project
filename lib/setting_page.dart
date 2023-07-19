@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled1/subjects.dart';
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
 
@@ -19,6 +20,7 @@ class _SettingPageState extends State<SettingPage> {
         centerTitle: true ,
 
       ),
+      body: SubjectTask(),
     );
   }
 }

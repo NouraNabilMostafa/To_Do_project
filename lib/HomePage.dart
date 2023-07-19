@@ -79,18 +79,3 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-/*isLoading
-          ? Center(
-             child: CircularProgressIndicator(),
-      )
-          : ListView.builder(
-        itemCount: titles.length,
-        itemBuilder: (BuildContext context, int index){
-          return ListTile(
-            leading: Text(titles[index].id.toString()?? "--"),
-            title: Text(titles[index].title ??"--"),
-            trailing: Text("completed: "+titles[index].completed.toString() ),);
-
-        },
-
-      ),*/

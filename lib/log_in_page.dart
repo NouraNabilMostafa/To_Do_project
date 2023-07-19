@@ -49,12 +49,13 @@ class _LoginState extends State<Login> {
                     if (value!.contains("@")){
                       return null;
                     }else{
-                      return "not vali email";
+                      return "not valid email";
                     }
                   },),),
               Padding(padding: const EdgeInsets.all(8.0),
                 child:
                 TextFormField(
+                  controller: passwordController,
                   decoration: InputDecoration(labelText: "password",labelStyle:TextStyle(fontSize:20),),
                   validator: (value){
                     if (value!.length>7){
@@ -64,13 +65,19 @@ class _LoginState extends State<Login> {
                     }
                   },),),
               InkWell(
-                onTap: (){if(_formKey.currentState!.validate()){
-                  signinUsingFirebase(emailcontroller.text, passwordController.text);
-
-                  saveEmail(emailcontroller.text);
-                  Navigator.push(context,
-                    MaterialPageRoute(builder: (context)=> HomaPage
-                      (email: emailcontroller.text,)),);}
+                onTap: ()async {
+                  if(_formKey.currentState!.validate()){
+                  bool log_result = await signinUsingFirebase(emailcontroller.text, passwordController.text);
+                  if (log_result==true) {
+                    saveEmail(emailcontroller.text);
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) =>
+                          HomaPage(email: emailcontroller.text,)),);
+                  }
+                  else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("log in failed")));
+                  }
+                };
                 },
                   child: Center(child:  BuTton(word: 'Login',),),
                 ),]
@@ -87,11 +94,21 @@ class _LoginState extends State<Login> {
     prefs.setString("email", email);
 
   }
-  signinUsingFirebase(String email, String password) async {
-    UserCredential userCredential =
-    await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-    final user = userCredential.user;
-    print(user?.uid);
-    saveEmail(user!.email!);
+  Future<bool> signinUsingFirebase(String email, String password) async {
+    bool result =false;
+    try{
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      final user = userCredential.user;
+
+      if (user != null){
+        print(user?.uid);
+        saveEmail(user!.email!);
+        result =true;
+       // return result;
+      }
+      return result;
+    } catch(e){
+      return result;
+    }
   }
 }
